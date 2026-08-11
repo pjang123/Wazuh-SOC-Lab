@@ -29,13 +29,13 @@ Vulnerability Scan Results]
 ## Dashboard Screenshots
 
 **Wazuh Overview — agent deployed and reporting**
-![Wazuh dashboard overview showing the victim-vm agent active](evidence/screenshots/dashboard-overview.png)
+![Wazuh dashboard overview showing the victim-vm agent active](Evidence/screenshots/dashboard-overview.png)
 
 **MITRE ATT&CK module — tactics and techniques by agent**
-![Wazuh MITRE ATT&CK module breakdown](evidence/screenshots/mitre-attack-module.png)
+![Wazuh MITRE ATT&CK module breakdown](Evidence/screenshots/mitre-attack-module.png)
 
 **Vulnerability Detection module — findings by severity**
-![Wazuh Vulnerability Detection module results](evidence/screenshots/vulnerability-detection-module.png)
+![Wazuh Vulnerability Detection module results](Evidence/screenshots/vulnerability-detection-module.png)
 
 ## Techniques Tested
 
