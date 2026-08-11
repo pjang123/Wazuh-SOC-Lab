@@ -26,6 +26,17 @@ Wazuh Manager + Dashboard]
 Vulnerability Scan Results]
 ```
 
+## Dashboard Screenshots
+
+**Wazuh Overview — agent deployed and reporting**
+![Wazuh dashboard overview showing the victim-vm agent active](evidence/screenshots/dashboard-overview.png)
+
+**MITRE ATT&CK module — tactics and techniques by agent**
+![Wazuh MITRE ATT&CK module breakdown](evidence/screenshots/mitre-attack-module.png)
+
+**Vulnerability Detection module — findings by severity**
+![Wazuh Vulnerability Detection module results](evidence/screenshots/vulnerability-detection-module.png)
+
 ## Techniques Tested
 
 | Technique | MITRE ID | Tactic | Result |
@@ -58,10 +69,8 @@ Full detail, raw logs, and analysis are in [`reports/incident-report.md`](report
     │   └── wazuh-mitre-attack-report.pdf
     └── screenshots/
         ├── dashboard-overview.png
-        ├── agent-active-status.png
         ├── mitre-attack-module.png
-        ├── vulnerability-detection-module.png
-        └── correlated-brute-force-alert.png
+        └── vulnerability-detection-module.png
 ```
 
 ## Tools Used
