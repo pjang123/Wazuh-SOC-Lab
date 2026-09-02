@@ -13,6 +13,16 @@ This project simulates a small enterprise monitoring setup using [Wazuh](https:/
 - Incident report writing in a professional analyst format
 - Vulnerability assessment and remediation prioritization
 
+## Why Wazuh
+
+I chose Wazuh over other SIEM options for a few practical reasons:
+
+- **Open source and self-hostable with no ingestion caps.** Splunk's free tier limits ingestion to 500MB/day and locks most enterprise features behind a license, so building a realistic manager/agent setup meant hitting a paywall quickly. Wazuh has no artificial limits, which made a full self-hosted deployment possible at zero cost.
+- **More than a log SIEM.** Wazuh bundles host-based intrusion detection, file integrity monitoring, and vulnerability detection alongside log analysis. That is why this single build could produce both the MITRE-mapped detection alerts and the CVE assessment. A bare log-only stack would not provide the vulnerability scanning out of the box.
+- **Recognized in real SOC environments.** Wazuh is widely deployed and a legitimate resume keyword rather than an obscure tool.
+
+The underlying skills carry over directly to Splunk or Elastic if a role uses those instead. Log ingestion, detection rule logic, alert triage, and MITRE mapping are the same concepts regardless of platform, and the concepts matter more than the specific product.
+
 ## Architecture
 
 ```mermaid
