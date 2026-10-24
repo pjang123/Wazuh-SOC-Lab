@@ -8,7 +8,7 @@
 
 ## Summary
 
-On August 11, 2026, a series of simulated attack techniques was conducted against a monitored Ubuntu endpoint (`victim-vm`) as part of a self-directed SOC lab exercise. Activity included SSH password-guessing attempts, sudo/privilege-escalation actions, and unauthorized user account creation, all originating from `192.168.1.161`. The Wazuh SIEM detected and logged all activity in near real time, correctly mapping it to multiple MITRE ATT&CK techniques and tactics. Notably, sustained password-guessing activity escalated to a **high-severity (Level 10) correlated brute-force alert**, demonstrating Wazuh's pattern-based detection in addition to single-event logging. A supplementary vulnerability scan of the endpoint was also performed using Wazuh's built-in Vulnerability Detection module.
+On August 11, 2026, a series of simulated attack techniques were conducted against a monitored Ubuntu endpoint (`victim-vm`) as part of a self-directed SOC lab exercise. The activity included SSH incorrect password-guessing attempts, sudo/privilege-escalation actions, and unauthorized user account creation, all originating from `192.168.1.161`. The Wazuh SIEM detected and logged all activity in near real time, correctly mapping it to multiple MITRE ATT&CK techniques and tactics. Notably, sustained password-guessing activity escalated to a **high-severity (Level 10) correlated brute-force alert**, demonstrating Wazuh's pattern-based detection in addition to single-event logging. A supplementary vulnerability scan of the endpoint was also performed using Wazuh's built-in Vulnerability Detection module.
 
 ## Environment
 
@@ -44,9 +44,10 @@ The table below reflects alerts filtered specifically to those with a MITRE ATT&
 | **5902** | **New user added to the system** | **8** | 1 | **Create Account (T1136)** | **Persistence** |
 
 **Total MITRE-mapped alerts:** 28
-**Tactics observed:** Credential Access, Privilege Escalation, Persistence (directly attacker-driven); Defense Evasion, Lateral Movement, Initial Access also appear in the dashboard's tactic breakdown but stem from Wazuh's default technique-to-tactic mapping for standard SSH session/login events rather than distinct attacker actions beyond what's listed above — see Analysis.
 
-### Highlighted alert 1 — Correlated brute-force escalation (Rule 2502, Level 10)
+**Tactics observed:** Credential Access, Privilege Escalation, Persistence (directly attacker-driven); Defense Evasion, Lateral Movement, Initial Access also appear in the dashboard's tactic breakdown but stem from Wazuh's default technique-to-tactic mapping for standard SSH session/login events rather than distinct attacker actions beyond what's listed above, more details in Analysis.
+
+### Highlighted alert 1: Correlated brute-force escalation (Rule 2502, Level 10)
 
 This is the strongest finding in the exercise: rather than logging each failed attempt in isolation, Wazuh correlated repeated authentication failures from the same source into a single higher-severity alert.
 
@@ -57,7 +58,7 @@ logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.1.161
 - **MITRE:** T1110 (Brute Force), Tactic: Credential Access
 - **Compliance mapping:** PCI DSS 10.2.4/10.2.5, HIPAA 164.312.b, NIST 800-53 AU.14/AC.7, GDPR IV_35.7.d/IV_32.2
 
-### Highlighted alert 2 — Unauthorized account creation (Rule 5902, Level 8)
+### Highlighted alert 2: Unauthorized account creation (Rule 5902, Level 8)
 
 ```
 Aug 11 17:33:05 paul-ubuntu useradd[7174]: new user: name=suspicious_user, UID=1001,
@@ -68,7 +69,7 @@ GID=1001, home=/home/suspicious_user, shell=/bin/sh, from=/dev/pts/2
 
 ## Vulnerability Assessment
 
-Wazuh's Vulnerability Detection module was used to passively scan installed packages on `victim-vm` (Ubuntu 26.04 LTS) against known CVE databases — no exploitation was performed, this reflects standard package-level exposure.
+Wazuh's Vulnerability Detection module was used to passively scan installed packages on `victim-vm` (Ubuntu 26.04 LTS) against known CVE databases. No exploitation was used, this was performed with the standard package-level exposure.
 
 | Severity | Count |
 |---|---|
@@ -87,16 +88,16 @@ The majority of findings are concentrated in the kernel image package, consisten
 
 ## Analysis
 
-The presence of login attempts against non-existent usernames, combined with the escalation to a correlated Level 10 brute-force alert, is a strong indicator of automated or sustained credential-guessing behavior rather than a legitimate user's typo. Unlike the first test pass in this exercise, this run generated sufficient volume within a short enough window to cross Wazuh's correlation threshold — demonstrating the difference between simple log-matching detection and pattern/frequency-based correlation, which is a materially more sophisticated detection capability.
+The presence of login attempts against non-existent usernames, combined with the escalation to a correlated Level 10 brute-force alert, is a strong indicator of automated or sustained credential-guessing behavior rather than a legitimate user's typo. Unlike the first test pass in this exercise, this run generated sufficient volume within a short enough window to cross Wazuh's correlation threshold. Thus demonstrating the difference between simple log-matching detection and pattern/frequency-based correlation, which is a materially more sophisticated detection capability.
 
 The subsequent sudo escalation and new-user creation extend the exercise beyond credential access into privilege escalation and persistence, giving broader technique coverage across the MITRE ATT&CK matrix than authentication failures alone.
 
-**Accuracy note:** the dashboard's "Top tactics" view also surfaces Defense Evasion, Lateral Movement, and Initial Access. These stem from Wazuh's default rule-to-MITRE mapping applied to standard SSH session and login events (e.g., a normal session open is tagged under "Valid Accounts"/"SSH" techniques, which map to those tactics in Wazuh's ruleset) rather than distinct attacker actions performed during this exercise. Distinguishing genuinely tested techniques from auto-tagged routine activity is called out here for accuracy.
+**Accuracy note:** The dashboard's "Top tactics" view also surfaces Defense Evasion, Lateral Movement, and Initial Access. These stem from Wazuh's default rule-to-MITRE mapping applied to standard SSH session and login events (e.g., a normal session open is tagged under "Valid Accounts"/"SSH" techniques, which map to those tactics in Wazuh's ruleset) rather than distinct attacker actions performed during this exercise. Distinguishing genuinely tested techniques from auto-tagged routine activity is called out here for accuracy.
 
 ## Recommendations
 
 1. Disable password-based SSH authentication in favor of key-based authentication.
-2. Deploy fail2ban (or equivalent) to automatically block source IPs after repeated authentication failures — this exercise's Level 10 alert is exactly the kind of event such a tool would act on.
+2. Deploy fail2ban (or equivalent) to automatically block source IPs after repeated authentication failures, this exercise's Level 10 alert is exactly the kind of event such a tool would act on.
 3. Restrict SSH access to known management IP ranges via host or network firewall rules.
 4. Enable Wazuh active response to automatically block offending source IPs after a defined failure threshold.
 5. Audit and remove the `suspicious_user` test account; in production, alert on any new local account creation outside change-management processes.
